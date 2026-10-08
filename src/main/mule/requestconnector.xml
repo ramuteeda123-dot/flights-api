@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="46508da6-58d8-4db9-b747-a25d147afaf8" >
+		<http:listener-connection host="localhost" port="8081" />
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="367f4e1c-451f-4482-89c6-fa7778e47772" >
+		<http:request-connection host="training4-american-ws.cloudhub.io" port="80" />
+	</http:request-config>
+	<flow name="requestconnectorFlow" doc:id="240ea1fb-c71c-46ae-b173-6f113b0aaed7" >
+		<http:listener doc:name="Listener" doc:id="568cb5cf-1d81-480f-aacf-1ca43d944317" config-ref="HTTP_Listener_config" path="/flights"/>
+		<logger level="INFO" doc:name="Logger" doc:id="fad37683-a0fb-4c90-a1c6-cffb762e55d3" message="Flow Started"/>
+		<http:request method="GET" doc:name="Request" doc:id="0e7f5102-9770-49a2-9291-6fadeadc26a1" config-ref="HTTP_Request_configuration" path="/api/flights">
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	origin : attributes.queryParams.origin,
+	destination : attributes.queryParams.destination
+}]]]></http:query-params>
+		</http:request>
+		<logger level="INFO" doc:name="Logger" doc:id="2cb4497d-dbc3-40e5-ba5a-fb82535d6963" />
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="e1db74c1-3747-4046-ade7-ee00cca93d93" />
+	</flow>
+</mule>
